@@ -20,12 +20,14 @@ if __name__ == '__main__':
     chat_id = os.getenv('CHAT_ID')
 
     domains = get_json_content("vk_groups.json")
+    
+    create_folder('last_posts')
 
     while True:
         for domain_number, domain in enumerate(domains):  
             response = get_last_vk_post(server_token, domain)
             create_folder('img')
-            create_folder('last_posts')
+           
             # create_folder('video')
             download_images_from_post(response)
             text_post = generate_text_post(response)
