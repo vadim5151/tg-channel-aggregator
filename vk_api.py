@@ -37,6 +37,7 @@ def download_videos_from_post(response):
         for count, i in enumerate(video):           
             video_url = (i['video']['first_frame'][-1]['url'])
             name = f'video/video{count}.mp4'
+            return video_url
             take_video(video_url, name) 
     except KeyError:
         pass
@@ -44,6 +45,7 @@ def download_videos_from_post(response):
 
 def get_last_vk_post(token, domain):
     url = 'https://api.vk.com/method/wall.get'
+    session = requests.Session()
     version = 5.137
     count = 1
     params = {
@@ -52,6 +54,8 @@ def get_last_vk_post(token, domain):
         'domain': domain,
         'count':count,
     }
-    response = requests.get(url, params=params)
+    response = session.get(url, params=params)
     response.raise_for_status()
     return response
+
+

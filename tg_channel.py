@@ -1,4 +1,5 @@
 import os
+import  json 
 
 import requests
 
@@ -15,6 +16,28 @@ def send_photo_file(TOKEN, chat_id, img, text_post):
     response.raise_for_status()
 
 
+def send_photoes_file(TOKEN, chat_id, text_post):
+    media = []
+
+    files = {}
+
+    for i in range(len(os.listdir('img'))):
+        media.append({"type": "photo", 'media': f"attach://random-name-{i}"})
+        files[media[i]['media'][9:]] = open(f"img/picture{i}.jpg", "rb")
+
+    media[0]['caption'] = text_post
+
+    params = {
+        "chat_id": chat_id,
+        "media": json.dumps(media),
+        "contentType": "application/json"
+    } 
+
+    send_text = f'https://api.telegram.org/bot{TOKEN}/sendMediaGroup'
+    response = requests.post(send_text, params=params, files=files)
+    response.raise_for_status()
+
+
 def send_video_file(TOKEN, chat_id, video):  
     file = {'video': open(video, 'rb')}
     response = requests.post(f'https://api.telegram.org/bot{TOKEN}/sendVideo?chat_id={chat_id}', files=file)
@@ -22,16 +45,22 @@ def send_video_file(TOKEN, chat_id, video):
 
     
 def send_post(tg_token, chat_id, text_post):
-    if len(text_post) < 1024 and  len(os.listdir('img')) != 0:
+    if len(text_post) < 1024 and  len(os.listdir('img')) == 1:
         send_photo_file(tg_token, chat_id, f'img/picture0.jpg',text_post) 
 
-    if len(text_post) > 1024 and len(os.listdir('img')) != 0:
+    if len(text_post) > 1024 and len(os.listdir('img')) == 1:
         send_photo_file(tg_token, chat_id, f'img/picture0.jpg',text_post[:1000])
-        send_message(tg_token,chat_id,text_post[1000:]) 
+        send_message(tg_token,chat_id,text_post[1000:])
+         
+    if len(os.listdir('img')) == 0:
+        pass
+
+    if len(os.listdir('img')) > 1:
+            send_photoes_file(tg_token, chat_id, text_post)
 
     # if len(os.listdir('video')) != 0:
     #     send_video_file(tg_token, chat_id, f'video/video0.mp4')
 
-    if len(os.listdir('img')) == 0:
-       send_message(tg_token,chat_id,text_post)
+    
         
+
