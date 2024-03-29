@@ -45,6 +45,7 @@ def send_video_file(TOKEN, chat_id, video):
 
     
 def send_post(tg_token, chat_id, text_post):
+
     if len(text_post) < 1024 and  len(os.listdir('img')) == 1:
         send_photo_file(tg_token, chat_id, f'img/picture0.jpg',text_post) 
 
@@ -61,6 +62,12 @@ def send_post(tg_token, chat_id, text_post):
     # if len(os.listdir('video')) != 0:
     #     send_video_file(tg_token, chat_id, f'video/video0.mp4')
 
-    
+def try_send_post(tg_token, chat_id, text_post ):
+     while True:
+        try: 
+            send_post(tg_token, chat_id, text_post )
+            break
+        except requests.exceptions.HTTPError:
+            pass
         
 

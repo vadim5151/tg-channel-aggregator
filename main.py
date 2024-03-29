@@ -36,16 +36,10 @@ if __name__ == '__main__':
                 with open(f'last_posts/file{domain_number}.txt', 'r', encoding='utf-8') as f:
                     text = f.read() 
                 if text_post != text:
-                    try:
-                        send_post(tg_token, chat_id, text_post )
-                    except requests.exceptions.HTTPError:
-                        pass
-                    write_text_post_to_txt(text_post,f'file{domain_number}.txt')
+                    try_send_post(tg_token, chat_id, text_post)
+                    write_text_post_to_txt(text_post,f'file{domain_number}.txt')             
             else:
-                try:
-                    send_post(tg_token, chat_id, text_post )
-                except requests.exceptions.HTTPError:
-                    pass
+                try_send_post(tg_token, chat_id, text_post)
                 write_text_post_to_txt(text_post,f'file{domain_number}.txt')
 
             delete_folder_img('img')
