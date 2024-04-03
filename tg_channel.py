@@ -3,9 +3,12 @@ import  json
 
 import requests
 
+from filter_posts import *
+from config import *
 
 
-def send_message(tg_token,chat_id,text_post):     
+
+def send_text(tg_token,chat_id,text_post):     
     response = requests.get(f"https://api.telegram.org/bot{tg_token}/sendMessage?chat_id={chat_id}&text={text_post}")
     response.raise_for_status()
 
@@ -51,7 +54,7 @@ def send_post(tg_token, chat_id, text_post):
 
     if len(text_post) > 1024 and len(os.listdir('img')) == 1:
         send_photo_file(tg_token, chat_id, f'img/picture0.jpg',text_post[:1000])
-        send_message(tg_token,chat_id,text_post[1000:])
+        send_text(tg_token,chat_id,text_post[1000:])
          
     if len(os.listdir('img')) == 0:
         pass
@@ -59,15 +62,12 @@ def send_post(tg_token, chat_id, text_post):
     if len(os.listdir('img')) > 1:
             send_photoes_file(tg_token, chat_id, text_post)
 
-    # if len(os.listdir('video')) != 0:
-    #     send_video_file(tg_token, chat_id, f'video/video0.mp4')
 
 def try_send_post(tg_token, chat_id, text_post ):
      while True:
-        try: 
+        try:     
             send_post(tg_token, chat_id, text_post )
             break
         except requests.exceptions.HTTPError:
             pass
-        
 

@@ -9,6 +9,8 @@ from file_operation import *
 from tg_channel import *
 from filter_posts import *
 from vk_api import *
+from filter_posts import *
+from config import *
 
 
 
@@ -27,23 +29,20 @@ if __name__ == '__main__':
         for domain_number, domain in enumerate(domains):  
             response = get_last_vk_post(server_token, domain)
             create_folder('img')
-           
-            # create_folder('video')
             download_images_from_post(response)
             text_post = generate_text_post(response)
-
-            if os.path.isfile(f'last_posts/file{domain_number}.txt'): 
-                with open(f'last_posts/file{domain_number}.txt', 'r', encoding='utf-8') as f:
-                    text = f.read() 
-                if text_post != text:
+            if filter_post(key_words, text_post) == False:
+                if os.path.isfile(f'last_posts/file{domain_number}.txt'):
+                    with open(f'last_posts/file{domain_number}.txt', 'r', encoding='utf-8') as f:
+                        text = f.read()
+                    if text_post != text:   
+                        print(123)
+                        try_send_post(tg_token, chat_id, text_post)
+                        write_text_post_to_txt(text_post,f'file{domain_number}.txt')     
+                else:   
                     try_send_post(tg_token, chat_id, text_post)
-                    write_text_post_to_txt(text_post,f'file{domain_number}.txt')             
-            else:
-                try_send_post(tg_token, chat_id, text_post)
-                write_text_post_to_txt(text_post,f'file{domain_number}.txt')
-
+                    write_text_post_to_txt(text_post,f'file{domain_number}.txt')
             delete_folder_img('img')
-            # delete_folder_img('video')
-        time.sleep(10)
+        # time.sleep(10)
             
             
