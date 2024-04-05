@@ -4,7 +4,6 @@ import  json
 import requests
 
 from filter_posts import *
-from config import *
 
 
 
@@ -19,14 +18,14 @@ def send_photo_file(TOKEN, chat_id, img, text_post):
     response.raise_for_status()
 
 
-def send_photoes_file(TOKEN, chat_id, text_post):
+def send_media_group(TOKEN, chat_id, text_post, path_to_pictures):
     media = []
 
     files = {}
 
-    for i in range(len(os.listdir('img'))):
+    for i in range(len(os.listdir(path_to_pictures))):
         media.append({"type": "photo", 'media': f"attach://random-name-{i}"})
-        files[media[i]['media'][9:]] = open(f"img/picture{i}.jpg", "rb")
+        files[media[i]['media'][9:]] = open(f"{path_to_pictures}/picture{i}.jpg", "rb")
 
     media[0]['caption'] = text_post
 
@@ -47,26 +46,26 @@ def send_video_file(TOKEN, chat_id, video):
     response.raise_for_status()
 
     
-def send_post(tg_token, chat_id, text_post):
+def send_post(tg_token, chat_id, text_post, path_to_pictures):
+    if len(text_post) < 1024 and  len(os.listdir(path_to_pictures)) == 1:
+        send_photo_file(tg_token, chat_id, f'{path_to_pictures}/picture0.jpg',text_post) 
 
-    if len(text_post) < 1024 and  len(os.listdir('img')) == 1:
-        send_photo_file(tg_token, chat_id, f'img/picture0.jpg',text_post) 
-
-    if len(text_post) > 1024 and len(os.listdir('img')) == 1:
-        send_photo_file(tg_token, chat_id, f'img/picture0.jpg',text_post[:1000])
+    if len(text_post) > 1024 and len(os.listdir(path_to_pictures)) == 1:
+        send_photo_file(tg_token, chat_id, f'{path_to_pictures}/picture0.jpg',text_post[:1000])
         send_text(tg_token,chat_id,text_post[1000:])
          
-    if len(os.listdir('img')) == 0:
-        pass
+    if len(os.listdir(path_to_pictures)) > 1  and  len(text_post) < 1024:
+            send_media_group(tg_token, chat_id, text_post, path_to_pictures)
 
-    if len(os.listdir('img')) > 1:
-            send_photoes_file(tg_token, chat_id, text_post)
+    if len(os.listdir(path_to_pictures)) > 1  and  len(text_post) > 1024:
+            send_media_group(tg_token, chat_id, text_post, path_to_pictures)
+            send_text(tg_token,chat_id,text_post[1000:])
 
-
-def try_send_post(tg_token, chat_id, text_post ):
+            
+def try_send_post(tg_token, chat_id, text_post, path_to_pictures):
      while True:
         try:     
-            send_post(tg_token, chat_id, text_post )
+            send_post(tg_token, chat_id, text_post, path_to_pictures)
             break
         except requests.exceptions.HTTPError:
             pass

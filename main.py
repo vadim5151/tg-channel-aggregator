@@ -1,9 +1,7 @@
-import os
-from pprint import pprint  
+import os  
+import time
 
 from dotenv import load_dotenv
-import requests
-import time
 
 from file_operation import *
 from tg_channel import *
@@ -36,13 +34,12 @@ if __name__ == '__main__':
                     with open(f'last_posts/file{domain_number}.txt', 'r', encoding='utf-8') as f:
                         text = f.read()
                     if text_post != text:   
-                        print(123)
-                        try_send_post(tg_token, chat_id, text_post)
+                        try_send_post(tg_token, chat_id, text_post, path_to_pictures)
                         write_text_post_to_txt(text_post,f'file{domain_number}.txt')     
                 else:   
-                    try_send_post(tg_token, chat_id, text_post)
+                    try_send_post(tg_token, chat_id, text_post, path_to_pictures)
                     write_text_post_to_txt(text_post,f'file{domain_number}.txt')
             delete_folder_img('img')
-        # time.sleep(10)
+        time.sleep(10)
             
             
